@@ -1,0 +1,61 @@
+/* :host {
+  font-size: 16px; 
+  font-family: sans-serif;
+} */
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+:host {
+  font-size: initial
+}
+
+body {
+  color: var(--font-color);
+  background-color: var(--background-color);
+}
+
+.widget {
+  font-family: "Montserrat", sans-serif;
+}
+
+.ant-popover {
+  z-index: 13000;
+}
+
+/* width */
+#font-selector-shadow-dom ::-webkit-scrollbar {
+  width:  5px !important;
+  height: 5px !important;
+}
+
+/* Track */
+#font-selector-shadow-dom ::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+/* Handle */
+#font-selector-shadow-dom ::-webkit-scrollbar-thumb {
+  background: #c2c2c2 !important;
+  border-radius: 5px !important;
+}
+
+/* Handle on hover */
+#font-selector-shadow-dom ::-webkit-scrollbar-thumb:hover {
+  background: #555 !important;
+}
+
+.ant-message {
+  z-index: 14000 !important;
+  /* Ensure high zIndex and use !important to override defaults */
+}
+
+.icon {
+  transition: transform 0.3s; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon:hover {
+  transform: scale(1.5);
+}
