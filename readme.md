@@ -1,7 +1,7 @@
 # FontScout - Find your Font (chrome extension)
 
 
-<p><img src="./public/logos/logox500.png" alt="FontScout logo" width="100" height="100"></p>
+<p><img src="./public/icons/FyF.png" alt="FontScout logo" width="100" height="100"></p>
 
 Struggling to choose the right font for your website? I built Find Your Font (FontScout) to make it easier. With this Chrome extension, you can quickly test different Google fonts directly on your site and pick the one that fits best
 
