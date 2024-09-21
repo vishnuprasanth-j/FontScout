@@ -3,19 +3,22 @@
   font-family: sans-serif;
 } */
 
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Overpass+Mono');
 :host {
   font-size: initial
 }
 
-body {
+/* body {
   color: var(--font-color);
   background-color: var(--background-color);
-}
 
-.widget {
-  font-family: "Montserrat", sans-serif;
+} */
+.b-border{
+  border: 1px solid #d2d2d2ef;
+}
+.fontscout-bd {
+  background-image: url(https://nowa.garden/gallery/c053-3.gif);
+
 }
 
 .ant-popover {
@@ -48,6 +51,9 @@ body {
   z-index: 14000 !important;
   /* Ensure high zIndex and use !important to override defaults */
 }
+div.ant-upload{
+width: 100%;
+}
 
 .icon {
   transition: transform 0.3s; 
@@ -58,4 +64,25 @@ body {
 
 .icon:hover {
   transform: scale(1.5);
+}
+
+.blinkie-banner {
+  position: relative;
+  height: 100px; 
+}
+
+.blinkie-img {
+  position: absolute;
+  top: 0;
+  left: 100%; /* Starts offscreen to the right */
+  animation: move-horizontal 7s linear infinite; /* Continuous movement */
+}
+
+@keyframes move-horizontal {
+  0% {
+    left: 100%;
+  }
+  100% {
+    left: -160px; /* Adjust based on width of your GIF */
+  }
 }

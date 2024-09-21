@@ -22,7 +22,7 @@
             "bmc.svg",
             "assets/*",
             "dist/*.js", 
-            "dist/*.css" 
+            "dist/*.css"
         ],
         "matches": ["<all_urls>"]
     }]

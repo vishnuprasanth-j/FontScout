@@ -1,8 +1,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react"
 
-import { Collapse, Select, Slider, Tabs, Tooltip, Tag, InputNumber, ColorPicker, ConfigProvider, Button} from "antd"
-import {  HighlightOutlined,  ItalicOutlined, UnderlineOutlined, UndoOutlined,  } from "@ant-design/icons"
+import { Collapse, Select, Slider, Tabs, Tooltip, Tag, InputNumber, ColorPicker, ConfigProvider, Button, Upload, message } from "antd"
+import { HighlightOutlined, ItalicOutlined, UnderlineOutlined, UndoOutlined, UploadOutlined, } from "@ant-design/icons"
 
 import { useMovable } from "./utils/hooks"
 
@@ -13,13 +13,10 @@ import Share from "./utils/share"
 
 import { getRangeSelectedNodes } from "./utils/selection"
 import { Icon } from "@iconify/react/dist/iconify.js"
-// import { ReactComponent as BMC } from './assets/logos/bmc.svg'
+
 
 const { Panel } = Collapse;
 
-// const bmcBase64 = `data:image/svg+xml;base64,${BMC.toString('base64')}`
-// some websites such as StackOverflow keeps interfering with local image paths, so added github raw content
-const BMC_IMG = `https://raw.githubusercontent.com/PaulleDemon/landing-pages-browsable/main/src/assets/images/brand-logos/bmc.svg`
 
 
 const defaultPosition = {
@@ -158,25 +155,37 @@ function App() {
 	}
 
 	const onFontUpdate = (value) => {
+		const selectedOption = fontOptions.find(option => option.value === value);
 
-		const fontFamily = Fonts[value].family
-		const fontCategory = Fonts[value].category
+		if (selectedOption.custom) {
+			const localFonts = JSON.parse(localStorage.getItem("customFonts"));
+			const customFont = localFonts[value.split('-')[1]];
 
-		const styleElement = document.querySelector("#font-selector-link")
-		const url = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(fontFamily)}`
-		styleElement.innerHTML = `@import url(${url})`
-
-		// setTimeout(() => {
-		// 	selectionFontPreview.current.style.fontFamily = `${fontFamily}, ${fontCategory}`
-		// }, 100)
-
-		setCurrentFont({
-			...currentFont,
-			family: fontFamily,
-			category: fontCategory
-		})
-	}
-
+			if (customFont) {
+				const styleElement = document.querySelector("#font-selector-link");
+				styleElement.innerHTML = `@font-face { font-family: '${customFont.name}'; src: url(${customFont.url}); }`;
+				setCurrentFont({
+					...currentFont,
+					family: customFont.name,
+					category: "custom"
+				});
+			}
+		} else {
+			const selectedFont = Fonts[value];
+			if (selectedFont) {
+				const fontFamily = selectedFont.family;
+				const fontCategory = selectedFont.category;
+				const styleElement = document.querySelector("#font-selector-link");
+				const url = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(fontFamily)}`;
+				styleElement.innerHTML = `@import url(${url})`;
+				setCurrentFont({
+					...currentFont,
+					family: fontFamily,
+					category: fontCategory
+				});
+			}
+		}
+	};
 
 	const onReset = () => {
 		selectionFontPreview.current.innerText = "Selection Text"
@@ -216,18 +225,32 @@ function App() {
 	}
 
 
+	const handleUpload = ({ file }) => {
+		const reader = new FileReader();
+		reader.onload = () => {
+			const base64Font = reader.result;
+			const customFonts = JSON.parse(localStorage.getItem("customFonts") || "[]");
+			const fontName = file.name.split(".")[0];
+			const newFont = { name: fontName, url: base64Font };
+			customFonts.push(newFont);
+			localStorage.setItem("customFonts", JSON.stringify(customFonts));
+			setFontOptions(prev => [...prev, { label: fontName, value: `custom-${customFonts.length - 1}`, custom: true }]);
+			message.success(`${fontName} font uploaded successfully!`);
+		};
+		reader.readAsDataURL(file);
+	};
 
 	return (
 		<ConfigProvider
 			theme={{
 				token: {
 					colorPrimary: '#10b981',
-					fontFamily: '"Montserrat", sans-serif',
+					fontFamily: '"Overpass Mono", monospace',
 
 				},
 			}}
 		>
-			<div ref={widgetRef} className="widget  tw-bg-white tw-min-h-[300px] tw-overflow-scroll  tw-text-black tw-z-[10000] tw-flex tw-flex-col tw-shadow-xl tw-p-3 tw-rounded-xl"
+			<div ref={widgetRef} className="widget fontscout-bd  tw-bg-white tw-min-h-[300px] tw-overflow-scroll  tw-text-black tw-z-[10000] tw-flex tw-flex-col tw-shadow-xl tw-p-3 tw-rounded-xl"
 				style={{
 					position: "fixed",
 					top: position.y,
@@ -238,7 +261,7 @@ function App() {
 					height: "700px",
 					resize: "vertical"
 				}}>
-				<div className="tw-flex !tw-select-none tw-items-center tw-w-full tw-justify-between tw-p-1 tw-px-3 tw-rounded-2xl tw-bg-[#f4f4f4]">
+				<div className="tw-flex !tw-select-none tw-items-center tw-w-full tw-justify-between tw-p-1 tw-px-3 tw-rounded-2xl tw-bg-[#f4f4f4] b-border">
 					<div className="tw-cursor-move" onMouseDown={handleMouseDown}>
 						<Icon icon="fluent-mdl2:drag-object" width="1.2em" height="1.2em" className="icon" />
 					</div>
@@ -269,9 +292,8 @@ function App() {
 					</div>
 				</div>
 
-
 				<div className="tw-w-full tw-p-2 tw-gap-3 tw-h-full tw-flex tw-flex-col">
-					<div className="tw-bg-[#f0f0f0ef]">
+					<div className="tw-bg-[#f0f0f0ef] b-border">
 						<div className="tw-h-[100px] tw-select-none  tw-rounded-lg tw-p-2  tw-min-h-[100px] tw-flex tw-flex-col tw-overflow-y-auto">
 							<div ref={selectionFontPreview}
 								className="tw-m-auto tw-text-[18px]">
@@ -335,9 +357,8 @@ function App() {
 						</div>
 					</div>
 
-	
-					<div className="tw-flex tw-flex-col tw-gap-1">
-						{/* <h2 className="tw-text-[18px] tw-mb-4 tw-text-green-600">Select a font</h2> */}
+
+					<div className="tw-flex tw-flex-col tw-gap-2">
 
 						<Select showSearch dropdownStyle={{ zIndex: "11000" }}
 							options={fontOptions}
@@ -353,6 +374,16 @@ function App() {
 							height='24'
 							className='transition-transform duration-500'
 						/></Button>
+						<Upload
+							accept=".ttf,.woff,.woff2,.otf"
+							beforeUpload={() => false}
+							onChange={handleUpload}
+							className="tw-w-full"
+						>
+							<Button className="tw-w-full"
+								icon={<UploadOutlined />}>Upload Font</Button>
+						</Upload>
+
 					</div>
 
 					<Collapse defaultActiveKey={['1']}>
@@ -429,10 +460,10 @@ function App() {
 
 					</Collapse>
 
-		
+
 
 					{/* <CodeSection /> */}
-					<div className="tw-flex tw-w-full tw-max-h-[120px]">
+					<div className="tw-flex tw-w-full tw-min-h-[120px]">
 						<Tabs className="tw-w-full tw-h-full" items={
 							[
 								{
@@ -451,10 +482,10 @@ function App() {
 							]
 						} />
 					</div>
-
+					{/* <div className="blinkie-banner">
+					<img src="https://64.media.tumblr.com/31c72268319f3ed492277fc843a3ce43/761ad2f6a7af0562-1a/s250x400/7680a1b614ef3e41fa1450714b1ff6491e18ad8b.gifv" alt="Twitter Blinkie" className="blinkie-img" />
+				    </div> */}
 				</div>
-
-
 			</div>
 		</ConfigProvider>
 	)

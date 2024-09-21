@@ -87,7 +87,7 @@ function CodeSection({fontStyle, type="import"}){
 
     return (
         <div className="tw-rounded-md tw-relative tw-p-1 tw-bg-gray-100 tw-text-wrap tw-overflow-y-auto 
-                        tw-h-[150px] tw-w-full">
+                        tw-h-[150px] tw-w-full b-border">
             <div className="tw-sticky tw-left-0 tw-top-2 tw-w-full tw-flex tw-place-content-end">
                 <button onClick={onCopy} className="hover:!tw-bg-gray-300 hover:!tw-color-black" 
 
